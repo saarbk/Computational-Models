@@ -1,0 +1,150 @@
+\documentclass[12pt]{article}
+\usepackage{lingmacros}
+\usepackage{tree-dvips}
+\usepackage[english]{babel}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\newcommand{\N}{\mathbb{N}}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{claim}[theorem]{claim}
+\usepackage[left=1in, right=1in, top=1in, bottom=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usetikzlibrary{automata,positioning,arrows}
+
+\begin{document}
+\begin{center}
+\section*{ Assignment 2  Computational Models
+ - Spring 2022}
+\end{center}
+\subsection*{Exercise 1}
+ Define the language $L_n$ over alphabet $\sum_n = \lbrace 1, 2, ..., n\rbrace$ to be the set of words
+which do not contain all the letters from $\sum_n$, now lets describe DFA $M=(Q,\sum ,\delta,q_0,F)$ s.t M accept $L_n$.
+ \[
+Q=\lbrace q_k | k \subseteq \lbrace \Sigma_n \rbrace \rbrace,\Sigma =\Sigma_n,q_0={q_{\phi}},F=\lbrace Q/\lbrace 1,2,3\dots n \rbrace \rbrace
+\]
+\[
+\delta(q_k,\sigma) = 
+     \begin{cases} 
+      q_{k\cup \sigma } &\quad\text{if } \sigma \not\in \lbrace k \rbrace\\
+       q_k &\quad\text{if     } \sigma \in \lbrace k \rbrace \\
+     \end{cases}     
+\]
+its sufficient to see that the following claim hold to proof $M$ accept $L_n$
+\begin{claim}
+the DFA M \textbf{not} accept w iff $\lbrace \sigma: \sigma \in w \rbrace =\lbrace k_n \rbrace$ when $k_n$ is the set of all the letters from $\Sigma_n$
+\end{claim}
+\begin{proof}
+First lets notice that Q contain all the subset from $\Sigma_n$ including the empty set witch correspond the empty world i.e $\lbrace \sigma \rbrace$ so in total we looking at $O(2^n)$ state for finite alphabet size $n$.\\
+$\Rightarrow w\notin L_m$ if $w\in \Sigma _n^*$ since M have only one  state  lets call it $q_n$ which is not accepting state, hence $\hat{\delta}(q_0,w)=q_n$ we must go through at least n state to achieve $q_n$.  \\now using reduction on the number of district steps we done for $\hat{w}=\phi$ $\delta(q_0,\phi)=q_0$ and for some $\hat{w},\hat{\sigma}$ s.t\[ \hat{\sigma}\notin|\lbrace \sigma :\sigma \in \hat{w}\rbrace |=|k| , \hat{\delta}(q_0,\hat{w})=q_{k}\Rightarrow \delta(q_k,\hat{\sigma})=q_{k\cup \hat{\sigma}}=\hat{\delta}(q_0,(\hat{w}||\hat{\sigma})), \lbrace \sigma :\sigma \in \hat{w}||\hat{\sigma}\rbrace |=|k+1| \]
+ hence we done n district steps so $| \lbrace \sigma :\sigma \in w\rbrace|=n$
+ since M is DAG (except the self loops) w contain all the letters from the alphabet\\
+ $\Leftarrow$ $w:= \forall \sigma \in \Sigma_n   |\sigma \in \lbrace w \rbrace $ now lets look at the first $\sigma \in w$, so $\delta(q_0,\sigma)=q_{\sigma}\in Q$ if the next letter in w hold $\hat{\sigma}\neq \sigma ,\delta(q_{\sigma},\hat{\sigma})=q_{\sigma}$ but we know that w have n district letters so in total  we get
+\[
+\hat{\delta}(q_0,w)=\hat{\delta}(q_{\sigma_1},\underbrace{\hat{w}}_{\lbrace \hat{w} \rbrace=\lbrace w/ \sigma_1\rbrace })=\hat{\delta}(q_{\lbrace \sigma_1,\sigma_2\dots \sigma_k \rbrace},\underbrace{\hat{w}}_{\lbrace \hat{w} \rbrace=\lbrace w/ \sigma_1,\sigma_2\dots \sigma_k \rbrace })=\delta(q_{\lbrace w/ \sigma_n \rbrace},\sigma_n)=q_n \notin F
+\]  
+hence $w\notin L_m$.
+
+\end{proof}
+\subsection*{Exercise 2}
+When A,B regular languages over same alphabet. $A \diamond B = \lbrace xy : x \in A \wedge y \in B \wedge |x| = |y|\rbrace$ lets define 
+\[
+\Sigma=\lbrace 0,1 \rbrace, A=L(0^*), B=L(1^*)
+\]
+by assuming that $ A \diamond B $ is regular language, using the property of regular language operation we get.
+ \[(A \diamond B )\cap \lbrace 0^*,1^*\rbrace=\lbrace 0^i,1^i|i\geq 0 \rbrace
+ \]
+which lead to contradiction since $\lbrace 0^i,1^i|i\geq 0 \rbrace $ is not regular language
+\subsection*{Exercise 3}
+$\text{\textbf{(a)} } L_1 = \lbrace w : \# a(w) \geq \# b(w)\rbrace  \text{ over } \Sigma =  \lbrace a, b, c\rbrace$\\
+  $L_1$ is not regular while assuming it is. for fix $\ell$ lets $w=b^\ell a^\ell$ ,$w\in L_1$ based on Pumping Lemma we can notice $|w|>\ell$, and for any patrion of $w=xyz$ such that $|y|>0,|xy|\leq \ell$ hence y is in the form  of $b^k$ now lets look at 
+  \[
+  b^{\ell+k}a^{\ell}\Rightarrow \#_{b}(b^{\ell+k}a^{\ell})>\#_{a}(b^{\ell+k}a^{\ell})\Rightarrow b^{\ell+k}a^{\ell} \notin L_1
+  \]
+we got an contradiction hence $L_1$ is not regular\\\\
+$\text{\textbf{(b)} } L_2 = \lbrace w : |w| \in \N_{even} \wedge w=w^R )\rbrace  \text{ over } \Sigma =  \lbrace 0,1 \rbrace$\\
+$L_2$ is not regular while assuming it is. for fix $\ell$ lets $w=1^\ell001^\ell$ ,$w\in L_2$ based on Pumping Lemma we can notice $|w|>\ell$, and for any patrion of $w=xyz$ such that $|y|>0,|xy|\leq \ell$ hence y is in the form  of $1^k$ now lets look at
+  \[
+  (1^{k+\ell}001^\ell)\neq (1^{k+\ell}001^\ell)^R\Rightarrow 1^{k+\ell}001^\ell \notin L_2
+  \]
+we got an contradiction hence $L_2$ is not regular\\\\
+$\text{\textbf{(c)} } L_3 = \lbrace w : |w| \in \N_{even} \wedge w=w^R )\rbrace  \text{ over } \Sigma =  \lbrace 0 \rbrace$\\ 
+$L_3$ is regular language since we can be written  as regular expression
+\[
+L_3=L((00)^*)=\lbrace 00\rbrace^*=\lbrace\epsilon ,00,0000,\dots\rbrace
+\]\\
+$\text{\textbf{(d)} } L_4 = \lbrace w : |w| \in \N \text{ s.t } |w|=n^3 \rbrace  \text{ over } \Sigma =  \lbrace 0,1 \rbrace$\\ 
+  $L_4$ is not regular while assuming it is. for fix $\ell$ lets $w=0^{\ell^3} $ ,$w\in L_4$ based on Pumping Lemma we can notice $|xyz|>\ell$, and for any patrion of $w=xyz$ such that $|y|>0,|xy|\leq \ell$. hence for some k,m such that $k+m\leq \ell$ this means that :
+  \[x=0^k,y=0^m,z=0^{\ell^3-k-m}\Rightarrow,xyz=0^{\ell^3}
+  \] 
+by  our assumption for any $n\in \N,$ $ xy^nz=0^{\ell^3+m(n-1)}\in L_4$, lets choose n=2  \[\text{since $1\geq m \geq \ell$ we will get for some $t$}
+\Rightarrow \underline{t^3=\ell^3+m }
+\]
+\[\text{but } t^3\geq(\ell+1)^3=\ell^3+3\ell^2+3\ell+1>
+\ell^3+\ell\geq\ell^3+m\Rightarrow \underline{t^3>\ell^3+m}
+\]
+we got an contradiction hence $L_4$ is not regular
+\subsection*{Exercise 4}
+\begin{claim}
+For language L s.t L satisfies pumping lemma with pumping constant $\ell$
+, \\$L||L$ satisfies pumping lemma with pumping constant  $2\ell$
+\end{claim}
+\begin{proof} Lets $w_1,w_2\in L'$ i.e $w_1\in L \wedge w_2 \in L $ and lets assume $|w_1w_2|\geq 2\ell$ to imply the pumping lemma, now we can notice that there is 2 possible scenario  
+\begin{itemize}
+  \item $|w_1|\geq \ell$ hence we can write $w_1$ as $w_1=xyz  \Rightarrow$ and we can write $w_1w_2$ as $w_1w_2=xyz||w_2$ which stand with the lemma property  
+  \item $|w_1|<\ell$ so $|w_2|>\ell$ can write $w_2$ as $w_2=xyz$ and $|xy|\leq\ell\Rightarrow |w_1xy|\leq 2\ell,|y|>0$  we can write $w_1w_2$ as $\underbrace{w_1x}_{x'}yz$ which stand with the claim property   
+\end{itemize}
+\end{proof}
+\subsection*{Exercise 5}
+\subsection*{(a)}
+Lets L be a regular language over alphabet $\Sigma$. and we will proof the language $L'$ define $L'=\lbrace xyz:xy^Rz \in L \rbrace$ is regular. since L is regular $\Rightarrow$ exists some DFA that accept L $M=(Q,\Sigma ,\delta,q_0,F)$ now lets define few new DFA's  s.t:
+\begin{itemize}
+\item $M_{q_0,q_k}=(Q,\Sigma ,\delta,q_0,q_k)$ for any $q_k\in Q $ this DFA will cover any path that accessible from $q_0$ 
+\item now lets look at $M_{q_k,q_j}=(Q,\sum ,\delta,q_k,q_j)$lets the language of $M_{q_k,q_j}$ is define by $L(M_{q_k,q_j})=\lbrace w :\exists q_k,q_j \in Q | \text{ exists path s.t }q_k \rightsquigarrow q_j \rbrace$ ,since $L(M_{q_k,q_j})$ is regular $\Rightarrow$ $rev(L(M_{q_k,q_j}))$ is regular (Recitation 3  ex.1). for any $q_k,q_j\in Q$ lets define the following language  $L(M_{q_k,q_j})^R$ 
+\item $M_{q_k,F}=(Q,\Sigma ,\delta,q_k,F)$ for any $q_k\in Q $ this DFA will cover any path that end in $F$
+\end{itemize}
+\begin{claim}
+$L'=\cup_{q_i,q_j}L(M_{q_0,q_i})||L(M_{q_i,q_j})^R||L(M_{q_j,F})$
+\end{claim}
+\begin{proof}
+\[ w=xyz \in L' \Leftrightarrow xy^Rz \in L 
+\Leftrightarrow \exists \hat{\delta}(\hat{\delta}(\hat{\delta}(q_0,x),y^R),z) \in F_m \Leftrightarrow
+\]
+\[
+\exists M_{q_0,q_i}:\hat{\delta}(q_0,x)\in F_{ M_{q_0,q_i}} \wedge \exists L(M_{q_i,q_j})^R : y\in L(M_{q_i,q_j})^R \wedge \exists M_{q_j,F}:\hat{\delta}(q_j,z)\in F_{ M_{q_j,F}}=F_m
+\]
+\[ \Leftrightarrow xyz\in \cup_{q_i,q_j}L(M_{q_0,q_i})||L(M_{q_i,q_j})^R||L(M_{q_j,F})
+\]
+\end{proof}
+\subsection*{(b)}
+Lets L be a regular language over alphabet $\Sigma$. and we will proof the language $L'$ define $L'=\lbrace xy  \in \Sigma^* :(x\in L) \text{ XOR } (y\in L) \rbrace$ is regular.
+using the  closure property of regular language
+\begin{itemize}
+\item $L=\lbrace x\in \Sigma^* : x\in L \rbrace$ and $\overline{L}=\lbrace x\in \Sigma^* : x\notin  L \rbrace$ are regular.
+\item $L||\overline{L}=\lbrace xy\in \Sigma^* : x\in L \wedge y \notin L \rbrace$ and $\overline{L}||L=\lbrace xy\in \Sigma^* : x\notin L \wedge y \in L \rbrace$ are regular.
+\item $(L||\overline{L}) \cup (\overline{L}||L)=\lbrace xy\in \Sigma^* : (x\in L \wedge y\notin L )\vee (x\notin L \wedge y\in L ) =(x\in L) \text{ XOR } (y\in L) \rbrace$ is regular
+\end{itemize}
+\subsection*{Exercise 6}
+$\text{\textbf{(a)} }\lbrace w \in \Sigma^*: \#_0 (w) \leq 3 \rbrace $\\
+lets express the following as regular expression 
+\[
+ \underbrace{1^*}_{I}\cup \underbrace{1^*01^*}_{II} \cup \underbrace{1^*01^*01^*}_{III}\cup \underbrace{1^*01^*01^*01^*}_{IV} 
+\]
+(I) is the regular expression of the language that contain non zeros at all.
+\\ (II) is the regular expression of the language that contain exactly 1 zero.
+\\ (III) is the regular expression of the language that contain exactly 2 zero.
+\\ (IV) is the regular expression of the language that contain exactly 3 zero.\\
+hence combine them all together will hold regular expression of the language that contain at most 3 zeros.
+\\\\$\text{\textbf{(b)} }\lbrace w \in \Sigma^*:|w| \text{ mod 4}=2 \rbrace $\\
+lets express the following as regular expression 
+\[
+ \underbrace{(0 \cup 1 )(0\cup 1) }_{(I)}\underbrace{((0\cup 1)(0\cup 1)(0\cup 1)(0\cup 1))^*}_{II}
+\]
+(I) is the regular expression of the language that  size is exactly 2. 
+\\(II) is the regular expression of the language from size 0,4,8.. \\
+hence the concatenate of (I) and (II) will hold the $|w|$ mod $4=2$ property
+\end{document}
